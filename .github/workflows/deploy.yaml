@@ -32,32 +32,21 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push client
-        uses: docker/build-push-action@v3.3.0
-        with:
-          context: ./multi-service-app-client
-          push: true
-          tags: youngermm/multi-service-app-client:latest
+        run: docker build -t youngermm/multi-service-app-client ./multi-service-app-client
+        run: docker push youngermm/multi-service-app-client
 
       - name: Build and push server
-        uses: docker/build-push-action@v3.3.0
-        with:
-          context: ./server
-          push: true
-          tags: youngermm/multi-service-app-server:latest
+        run: docker build -t youngermm/multi-service-app-server ./server
+        run: docker push youngermm/multi-service-app-server
 
       - name: Build and push worker
-        uses: docker/build-push-action@v3.3.0
-        with:
-          context: ./worker
-          push: true
-          tags: youngermm/multi-service-app-worker:latest
+        run: docker build -t youngermm/multi-service-app-worker ./worker
+        run: docker push youngermm/multi-service-app-worker
 
       - name: Build and push nginx
-        uses: docker/build-push-action@v3.3.0
-        with:
-          context: ./nginx
-          push: true
-          tags: youngermm/multi-service-app-nginx:latest
+        run: docker build -t youngermm/multi-service-app-nginx ./nginx
+        run: docker push youngermm/multi-service-app-nginx
+
 
   # deploy:
   #   name: deploy_to_render
