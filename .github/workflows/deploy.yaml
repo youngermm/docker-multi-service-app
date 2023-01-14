@@ -1,0 +1,74 @@
+name: test_and_deploy_docker_multi-service-app
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: test_before_deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v3
+
+      - name: docker_build
+        run: docker build -t youngermm/frontend-app -f ./Dockerfile.dev .
+
+      - name: test_application
+        run: docker run -e CI=true youngermm/frontend-app npm test
+
+  docker:
+    name: docker_build_push
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: docker_login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push client
+        uses: docker/build-push-action@latest
+        with:
+          context: ./multi-service-app-client
+          push: true
+          tags: youngermm/multi-service-app-client:latest
+
+      - name: Build and push server
+        uses: docker/build-push-action@latest
+        with:
+          context: ./server
+          push: true
+          tags: youngermm/multi-service-app-server:latest
+
+      - name: Build and push worker
+        uses: docker/build-push-action@latest
+        with:
+          context: ./worker
+          push: true
+          tags: youngermm/multi-service-app-worker:latest
+
+      - name: Build and push nginx
+        uses: docker/build-push-action@latest
+        with:
+          context: ./nginx
+          push: true
+          tags: youngermm/multi-service-app-nginx:latest
+
+  # deploy:
+  #   name: deploy_to_render
+  #   needs: test
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: JorgeLNJunior/render-deploy@v1.3.0 # Added to non-repository allow list. . .
+  #     with:
+  #       service_id: ${{ secrets.RENDER_SERVICE_ID }} # required
+  #       api_key: ${{ secrets.RENDER_API_KEY }} # required
+  #       clear_cache: false # Clear build cache. Optional
+  #       wait_deploy: false # Wait until the deploy status is successful. Warning! Free Render services can take +10 minutes to be fully deployed. Optional
