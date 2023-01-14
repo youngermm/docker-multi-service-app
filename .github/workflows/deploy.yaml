@@ -32,20 +32,24 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push client
-        - run: docker build -t youngermm/multi-service-app-client ./multi-service-app-client
-        - run: docker push youngermm/multi-service-app-client
+        run: > 
+          docker build -t youngermm/multi-service-app-client ./multi-service-app-client \
+          docker push youngermm/multi-service-app-client
 
       - name: Build and push server
-        - run: docker build -t youngermm/multi-service-app-server ./server
-        - run: docker push youngermm/multi-service-app-server
+        run: > 
+          docker build -t youngermm/multi-service-app-server ./server \
+          docker push youngermm/multi-service-app-server
 
       - name: Build and push worker
-        - run: docker build -t youngermm/multi-service-app-worker ./worker
-        - run: docker push youngermm/multi-service-app-worker
+        run: > 
+          docker build -t youngermm/multi-service-app-worker ./worker \
+          docker push youngermm/multi-service-app-worker
 
       - name: Build and push nginx
-        - run: docker build -t youngermm/multi-service-app-nginx ./nginx
-        - run: docker push youngermm/multi-service-app-nginx
+        run: > 
+          docker build -t youngermm/multi-service-app-nginx ./nginx \
+          docker push youngermm/multi-service-app-nginx
 
 
   # deploy:
