@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: docker_build
-        run: docker build -t youngermm/frontend-app -f ./Dockerfile.dev .
+        run: docker build -t youngermm/multi-service-app-client -f ./multi-service-app-client/Dockerfile.dev ./multi-service-app-client
 
       - name: test_application
-        run: docker run -e CI=true youngermm/frontend-app npm test
+        run: docker run -e CI=true youngermm/multi-service-app-client npm test
 
   docker:
     name: docker_build_push
